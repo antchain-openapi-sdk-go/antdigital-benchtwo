@@ -8,9 +8,9 @@ import (
 	antchainutil "github.com/antchain-openapi-sdk-go/antchain-util/service"
 )
 
-/**
- * Model for initing client
- */
+// Description:
+//
+// Model for initing client
 type Config struct {
 	// accesskey id
 	AccessKeyId *string `json:"accessKeyId,omitempty" xml:"accessKeyId,omitempty"`
@@ -19,26 +19,66 @@ type Config struct {
 	// security token
 	SecurityToken *string `json:"securityToken,omitempty" xml:"securityToken,omitempty"`
 	// http protocol
+	//
+	// example:
+	//
+	// http
 	Protocol *string `json:"protocol,omitempty" xml:"protocol,omitempty"`
 	// read timeout
+	//
+	// example:
+	//
+	// 10
 	ReadTimeout *int `json:"readTimeout,omitempty" xml:"readTimeout,omitempty"`
 	// connect timeout
+	//
+	// example:
+	//
+	// 10
 	ConnectTimeout *int `json:"connectTimeout,omitempty" xml:"connectTimeout,omitempty"`
 	// http proxy
+	//
+	// example:
+	//
+	// http://localhost
 	HttpProxy *string `json:"httpProxy,omitempty" xml:"httpProxy,omitempty"`
 	// https proxy
+	//
+	// example:
+	//
+	// https://localhost
 	HttpsProxy *string `json:"httpsProxy,omitempty" xml:"httpsProxy,omitempty"`
 	// endpoint
+	//
+	// example:
+	//
+	// cs.aliyuncs.com
 	Endpoint *string `json:"endpoint,omitempty" xml:"endpoint,omitempty"`
 	// proxy white list
+	//
+	// example:
+	//
+	// http://localhost
 	NoProxy *string `json:"noProxy,omitempty" xml:"noProxy,omitempty"`
 	// max idle conns
+	//
+	// example:
+	//
+	// 3
 	MaxIdleConns *int `json:"maxIdleConns,omitempty" xml:"maxIdleConns,omitempty"`
 	// user agent
+	//
+	// example:
+	//
+	// Alibabacloud/1
 	UserAgent *string `json:"userAgent,omitempty" xml:"userAgent,omitempty"`
 	// socks5 proxy
 	Socks5Proxy *string `json:"socks5Proxy,omitempty" xml:"socks5Proxy,omitempty"`
 	// socks5 network
+	//
+	// example:
+	//
+	// TCP
 	Socks5NetWork *string `json:"socks5NetWork,omitempty" xml:"socks5NetWork,omitempty"`
 	// 长链接最大空闲时长
 	MaxIdleTimeMillis *int `json:"maxIdleTimeMillis,omitempty" xml:"maxIdleTimeMillis,omitempty"`
@@ -148,8 +188,75 @@ func (s *Config) SetMaxRequestsPerHost(v int) *Config {
 	return s
 }
 
+// OrderItemInfo
+type OrderItemInfo struct {
+	// 商品ID
+	// example:
+	//
+	// SKU001
+	ItemId *string `json:"item_id,omitempty" xml:"item_id,omitempty" require:"true"`
+	// 数量
+	// example:
+	//
+	// 2
+	Quantity *int64 `json:"quantity,omitempty" xml:"quantity,omitempty" require:"true"`
+}
+
+func (s OrderItemInfo) String() string {
+	return tea.Prettify(s)
+}
+
+func (s OrderItemInfo) GoString() string {
+	return s.String()
+}
+
+func (s *OrderItemInfo) SetItemId(v string) *OrderItemInfo {
+	s.ItemId = &v
+	return s
+}
+
+func (s *OrderItemInfo) SetQuantity(v int64) *OrderItemInfo {
+	s.Quantity = &v
+	return s
+}
+
+// 基本信息
+type Message struct {
+	// 姓名
+	// example:
+	//
+	// 张三
+	Name *string `json:"name,omitempty" xml:"name,omitempty" require:"true"`
+	// 年龄
+	// example:
+	//
+	// 18
+	Age *int64 `json:"age,omitempty" xml:"age,omitempty" require:"true"`
+}
+
+func (s Message) String() string {
+	return tea.Prettify(s)
+}
+
+func (s Message) GoString() string {
+	return s.String()
+}
+
+func (s *Message) SetName(v string) *Message {
+	s.Name = &v
+	return s
+}
+
+func (s *Message) SetAge(v int64) *Message {
+	s.Age = &v
+	return s
+}
+
 // 测试
 type PayOrderOpenApiResult struct {
+	// 11
+	// example:
+	//
 	// 11
 	Test *string `json:"test,omitempty" xml:"test,omitempty" require:"true"`
 }
@@ -164,6 +271,28 @@ func (s PayOrderOpenApiResult) GoString() string {
 
 func (s *PayOrderOpenApiResult) SetTest(v string) *PayOrderOpenApiResult {
 	s.Test = &v
+	return s
+}
+
+// aaa
+type AA struct {
+	// cc
+	// example:
+	//
+	// bb
+	Aa *string `json:"aa,omitempty" xml:"aa,omitempty" require:"true"`
+}
+
+func (s AA) String() string {
+	return tea.Prettify(s)
+}
+
+func (s AA) GoString() string {
+	return s.String()
+}
+
+func (s *AA) SetAa(v string) *AA {
+	s.Aa = &v
 	return s
 }
 
@@ -266,10 +395,11 @@ type Client struct {
 	MaxRequestsPerHost      *int
 }
 
-/**
- * Init client with Config
- * @param config config contains the necessary information to create a client
- */
+// Description:
+//
+// # Init client with Config
+//
+// @param config - config contains the necessary information to create a client
 func NewClient(config *Config) (*Client, error) {
 	client := new(Client)
 	err := client.Init(config)
@@ -277,7 +407,7 @@ func NewClient(config *Config) (*Client, error) {
 }
 
 func (client *Client) Init(config *Config) (_err error) {
-	if tea.BoolValue(util.IsUnset(tea.ToMap(config))) {
+	if tea.BoolValue(util.IsUnset(config)) {
 		_err = tea.NewSDKError(map[string]interface{}{
 			"code":    "ParameterMissing",
 			"message": "'config' can not be unset",
@@ -306,16 +436,23 @@ func (client *Client) Init(config *Config) (_err error) {
 	return nil
 }
 
-/**
- * Encapsulate the request and invoke the network
- * @param action api name
- * @param protocol http or https
- * @param method e.g. GET
- * @param pathname pathname of every api
- * @param request which contains request params
- * @param runtime which controls some details of call api, such as retry times
- * @return the response
- */
+// Description:
+//
+// # Encapsulate the request and invoke the network
+//
+// @param action - api name
+//
+// @param protocol - http or https
+//
+// @param method - e.g. GET
+//
+// @param pathname - pathname of every api
+//
+// @param request - which contains request params
+//
+// @param runtime - which controls some details of call api, such as retry times
+//
+// @return the response
 func (client *Client) DoRequest(version *string, action *string, protocol *string, method *string, pathname *string, request map[string]interface{}, headers map[string]*string, runtime *util.RuntimeOptions) (_result map[string]interface{}, _err error) {
 	_err = tea.Validate(runtime)
 	if _err != nil {
@@ -366,7 +503,7 @@ func (client *Client) DoRequest(version *string, action *string, protocol *strin
 				"req_msg_id":       antchainutil.GetNonce(),
 				"access_key":       client.AccessKeyId,
 				"base_sdk_version": tea.String("TeaSDK-2.0"),
-				"sdk_version":      tea.String("1.0.1"),
+				"sdk_version":      tea.String("1.0.3"),
 				"_prod_code":       tea.String("BENCHTWO"),
 				"_prod_channel":    tea.String("default"),
 			}
@@ -424,10 +561,11 @@ func (client *Client) DoRequest(version *string, action *string, protocol *strin
 	return _resp, _err
 }
 
-/**
- * Description: 测试使用
- * Summary: 测试使用
- */
+// Description:
+//
+// Description: 测试使用
+//
+// Summary: 测试使用
 func (client *Client) TestAntchainDemotmtWorkbenchCreate(request *TestAntchainDemotmtWorkbenchCreateRequest) (_result *TestAntchainDemotmtWorkbenchCreateResponse, _err error) {
 	runtime := &util.RuntimeOptions{}
 	headers := make(map[string]*string)
@@ -440,10 +578,11 @@ func (client *Client) TestAntchainDemotmtWorkbenchCreate(request *TestAntchainDe
 	return _result, _err
 }
 
-/**
- * Description: 测试使用
- * Summary: 测试使用
- */
+// Description:
+//
+// Description: 测试使用
+//
+// Summary: 测试使用
 func (client *Client) TestAntchainDemotmtWorkbenchCreateEx(request *TestAntchainDemotmtWorkbenchCreateRequest, headers map[string]*string, runtime *util.RuntimeOptions) (_result *TestAntchainDemotmtWorkbenchCreateResponse, _err error) {
 	_err = util.ValidateModel(request)
 	if _err != nil {
